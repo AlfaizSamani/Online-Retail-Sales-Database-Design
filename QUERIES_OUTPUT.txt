@@ -1,0 +1,39 @@
+-- View: SalesReport
+SELECT * FROM SalesReport;
+-- Output: 3 rows with joined data (customer, product, order, payment, shipper)
+
+-- Total revenue per product
+SELECT p.name, SUM(oi.quantity * oi.price_at_purchase) AS total_revenue
+FROM order_items oi
+JOIN products p ON oi.product_id = p.product_id
+GROUP BY p.product_id;
+-- Output:
+-- Wireless Mouse - ₹699
+-- Bluetooth Earbuds - ₹1499
+-- Yoga Mat - ₹599
+
+-- Orders by customer
+SELECT c.name, COUNT(o.order_id) AS total_orders
+FROM customers c
+JOIN orders o ON c.customer_id = o.customer_id
+GROUP BY c.customer_id;
+-- Output: Alfaiz - 2 orders, other customers - 1 each
+
+-- Products and quantities sold
+SELECT p.name, SUM(oi.quantity) AS total_quantity
+FROM products p
+JOIN order_items oi ON p.product_id = oi.product_id
+GROUP BY p.product_id;
+-- Output: Each product sold once (1 unit each)
+
+-- Payment method usage
+SELECT payment_method, COUNT(*) FROM payments GROUP BY payment_method;
+-- Output: UPI - 1, Credit Card - 1
+
+-- Revenue by shipper
+SELECT s.name, SUM(pay.amount_paid) AS total_collected
+FROM shippers s
+JOIN orders o ON s.shipper_id = o.shipper_id
+JOIN payments pay ON o.order_id = pay.order_id
+GROUP BY s.shipper_id;
+-- Output: E-Ship: ₹2797
